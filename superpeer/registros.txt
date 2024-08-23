@@ -1,0 +1,1 @@
+Node2 registered, nodes: {'Node1': ['file1.txt', 'file2.txt'], 'Node2': ['file3.txt', 'file4.txt', 'file5.txt']}. #: 2

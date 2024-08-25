@@ -67,7 +67,7 @@ def update_superpeer():
             "node_id": args.node_name,
             "resources": resources
         }
-        response = requests.post("http://localhost:8080/register", json=data)
+        response = requests.post("http://3.228.32.5:8080/register", json=data)
         response.raise_for_status()
         #logging.info(response.json())
         print(response.json())
@@ -79,7 +79,7 @@ def update_superpeer():
 # Función para registrar el nodo en el superpeer
 def register_with_superpeer():
     try:
-        superpeer_url = "http://localhost:8080/register"
+        superpeer_url = "http://3.228.32.5:8080/register"
         data = {
             "node_id": args.node_name,
             "resources": resources
@@ -94,4 +94,4 @@ def register_with_superpeer():
 
 if __name__ == '__main__':
     register_with_superpeer()
-    app.run(host='3.228.32.5', port=args.port)
+    app.run(host='0.0.0.0', port=args.port)

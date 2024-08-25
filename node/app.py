@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
-import requests, logging, argparse, random, os
+import requests, argparse, random, os
 
 app = Flask(__name__)
 
 # Configuracion de logging
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 # Leer recursos desde el archivo
 def load_resources(file_path, num_resources):
@@ -38,7 +38,8 @@ def upload():
         update_superpeer()
         return jsonify({"message": f"File {file_name} uploaded successfully."})
     except Exception as e:
-        logging.error(f"Error uploading file: {str(e)}")
+        #logging.error(f"Error uploading file: {str(e)}")
+        print(f"Error uploading file: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 # Endpoint para descargar un archivo dummy
@@ -53,22 +54,26 @@ def download():
             return jsonify({"message": f"Downloading {file_name}..."}), 200
         return jsonify({"message": "File not found"}), 404
     except Exception as e:
-        logging.error(f"Error downloading file: {str(e)}")
+        #logging.error(f"Error downloading file: {str(e)}")
+        print(f"Error downloading file: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 # Función para actualizar el superpeer
 def update_superpeer():
     try:
-        logging.info("====| UPDATING SUPER PEER |====")
+        #logging.info("====| UPDATING SUPER PEER |====")
+        print("====| UPDATING SUPER PEER |====")
         data = {
             "node_id": args.node_name,
             "resources": resources
         }
         response = requests.post("http://localhost:8080/register", json=data)
         response.raise_for_status()
-        logging.info(response.json())
+        #logging.info(response.json())
+        print(response.json())
     except requests.exceptions.RequestException as e:
-        logging.error(f"Error updating superpeer: {str(e)}")
+        #logging.error(f"Error updating superpeer: {str(e)}")
+        print(f"Error updating superpeer: {str(e)}")
 
 
 # Función para registrar el nodo en el superpeer
@@ -81,10 +86,12 @@ def register_with_superpeer():
         }
         response = requests.post(superpeer_url, json=data)
         response.raise_for_status()
-        logging.info(response.json())
+        #logging.info(response.json())
+        print(response.json())
     except requests.exceptions.RequestException as e:
-        logging.error(f"Error registering with superpeer: {str(e)}")
+        #logging.error(f"Error registering with superpeer: {str(e)}")
+        print(f"Error registering with superpeer: {str(e)}")
 
 if __name__ == '__main__':
     register_with_superpeer()
-    app.run(host='0.0.0.0', port=args.port)
+    app.run(host='3.228.32.5', port=args.port)

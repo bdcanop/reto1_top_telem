@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
-import logging
+# import logging
 
 app = Flask(__name__)
 
 # Configuracion de logging
-logging.basicConfig(filename='registros.log', level=logging.INFO, format='%(asctime)s - %(message)s')
+#logging.basicConfig(filename='registros.log', level=logging.INFO, format='%(asctime)s - %(message)s')
 
 # Lista para almacenar la información de los nodos y sus recursos
 nodes = {}
@@ -21,12 +21,13 @@ def register():
         resources = data['resources']
         nodes[node_id] = resources
 
-        logging.info(f"Node {node_id} registered, nodes: {nodes}. #: {len(nodes)}")
+        # logging.info(f"Node {node_id} registered, nodes: {nodes}. #: {len(nodes)}")
         print(f"Node {node_id} registered, nodes: {nodes}. #: {len(nodes)}")
 
         return jsonify({"message": f"Node {node_id} registered successfully. Total nodes: {len(nodes)}"})
     except Exception as e:
-        logging.error(f"Error registering node: {str(e)}")
+        #logging.error(f"Error registering node: {str(e)}")
+        print(f"Error registering node: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 # Endpoint para buscar recursos
@@ -43,7 +44,8 @@ def search():
             
         return jsonify({"Message": "Resource not found"}), 404
     except Exception as e:
-        logging.error(f"Error searching resource: {str(e)}")
+        #logging.error(f"Error searching resource: {str(e)}")
+        print(f"Error searching resource: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
     
 # Endpoint para listar todos los nodos y los recursos disponibles
@@ -52,7 +54,8 @@ def list_nodes_and_resources():
     try:
         return jsonify(nodes)
     except Exception as e:
-        logging.error(f"Error listing nodes: {str(e)}")
+        #logging.error(f"Error listing nodes: {str(e)}")
+        print(f"Error listing nodes: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':

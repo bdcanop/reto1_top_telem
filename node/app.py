@@ -1,13 +1,29 @@
 from flask import Flask, request, jsonify
-import requests, logging
+import requests, logging, argparse, random, os
 
 app = Flask(__name__)
 
 # Configuracion de logging
 logging.basicConfig(level=logging.INFO)
 
+# Leer recursos desde el archivo
+def load_resources(file_path, num_resources):
+    with open(file_path, 'r') as file:
+        all_resources = file.read().splitlines()
+    return random.sample(all_resources, num_resources)
+
+# Configurar argumentos de la línea de comandos
+parser = argparse.ArgumentParser(description='Iniciar un nodo con un nombre y una cantidad de archivos a compartir.')
+parser.add_argument('node_name', type=str, help='Nombre del nodo')
+parser.add_argument('num_files', type=int, help='Cantidad de archivos a compartir')
+parser.add_argument('port', type=int, help='Puerto en el que se ejecutará el nodo')
+args = parser.parse_args()
+
+# Ruta del directorio de recursos
+resources_path = os.path.join(os.path.dirname(__file__), '..', 'resources', 'resources.txt')
+
 # Simulando los recursos que tiene este nodo
-resources = ["file1.txt", "file2.txt"]
+resources = load_resources(resources_path, args.num_files)
 
 # Endpoint para subir un archivo dummy
 @app.route('/upload', methods=['POST'])
@@ -43,9 +59,9 @@ def download():
 # Función para actualizar el superpeer
 def update_superpeer():
     try:
-        logging.info("====| UPDATING |====")
+        logging.info("====| UPDATING SUPER PEER |====")
         data = {
-            "node_id": "Node1",
+            "node_id": args.node_name,
             "resources": resources
         }
         response = requests.post("http://localhost:8080/register", json=data)
@@ -60,7 +76,7 @@ def register_with_superpeer():
     try:
         superpeer_url = "http://localhost:8080/register"
         data = {
-            "node_id": "Node1",
+            "node_id": args.node_name,
             "resources": resources
         }
         response = requests.post(superpeer_url, json=data)
@@ -71,4 +87,4 @@ def register_with_superpeer():
 
 if __name__ == '__main__':
     register_with_superpeer()
-    app.run(host='0.0.0.0', port=8081)
+    app.run(host='0.0.0.0', port=args.port)

@@ -22,6 +22,7 @@ def register():
         nodes[node_id] = resources
 
         logging.info(f"Node {node_id} registered, nodes: {nodes}. #: {len(nodes)}")
+        print(f"Node {node_id} registered, nodes: {nodes}. #: {len(nodes)}")
 
         return jsonify({"message": f"Node {node_id} registered successfully. Total nodes: {len(nodes)}"})
     except Exception as e:
@@ -43,6 +44,15 @@ def search():
         return jsonify({"Message": "Resource not found"}), 404
     except Exception as e:
         logging.error(f"Error searching resource: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
+    
+# Endpoint para listar todos los nodos y los recursos disponibles
+@app.route('/list', methods=['GET'])
+def list_nodes_and_resources():
+    try:
+        return jsonify(nodes)
+    except Exception as e:
+        logging.error(f"Error listing nodes: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':

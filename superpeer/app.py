@@ -57,6 +57,11 @@ def list_nodes_and_resources():
         #logging.error(f"Error listing nodes: {str(e)}")
         print(f"Error listing nodes: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
+    
+
+@app.route('/')
+def home():
+    return "<h1>Welcome to the Peer Connection Server</h1><p>This server is currently handling peer connections.</p>"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)

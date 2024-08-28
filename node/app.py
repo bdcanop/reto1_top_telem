@@ -16,6 +16,7 @@ def load_resources(file_path, num_resources):
 parser = argparse.ArgumentParser(description='Iniciar un nodo con un nombre y una cantidad de archivos a compartir.')
 parser.add_argument('node_name', type=str, help='Nombre del nodo')
 parser.add_argument('num_files', type=int, help='Cantidad de archivos a compartir')
+parser.add_argument('host', type=str, help='Host al que se conectara el super peer')
 parser.add_argument('port', type=int, help='Puerto en el que se ejecutará el nodo')
 args = parser.parse_args()
 
@@ -67,7 +68,8 @@ def update_superpeer():
             "node_id": args.node_name,
             "resources": resources
         }
-        response = requests.post("http://3.228.32.5:8080/register", json=data)
+        #response = requests.post("http://3.228.32.5:8080/register", json=data)
+        response = requests.post(f"http://{args.host}/register", json=data)
         response.raise_for_status()
         #logging.info(response.json())
         print(response.json())
@@ -79,7 +81,7 @@ def update_superpeer():
 # Función para registrar el nodo en el superpeer
 def register_with_superpeer():
     try:
-        superpeer_url = "http://3.228.32.5:8080/register"
+        superpeer_url = f"http://{args.host}/register"
         data = {
             "node_id": args.node_name,
             "resources": resources
@@ -94,4 +96,4 @@ def register_with_superpeer():
 
 if __name__ == '__main__':
     register_with_superpeer()
-    app.run(host='0.0.0.0', port=args.port)
+    app.run(host=args.host, port=args.port)

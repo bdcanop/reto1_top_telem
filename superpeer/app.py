@@ -96,8 +96,4 @@ def home():
     return "<h1>Welcome to the Peer Connection Server</h1><p>This server is currently handling peer connections.</p>"
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Iniciar un superpeer con un puerto específico.')
-    parser.add_argument('port', type=int, help='Puerto en el que se ejecutará el superpeer')
-    args = parser.parse_args()
-    
-    app.run(host='0.0.0.0', port=args.port)
+    app.run(host='0.0.0.0', port=8080)

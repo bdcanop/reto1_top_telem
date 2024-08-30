@@ -1,33 +1,16 @@
-Funcionamiento:
+Cuando se inician las instancias que soportan los super peer Systemd busca todos los servicios habilitados y arranca el servicio llamado `flaskapp.service` automaticamente.
 
-Primero se suben los super peers (en consola se ejecuta y el único argumento que recibe por ahora para testear en local es el puerto en donde se va a ejecutar) luego en AWS no recibirá ningun argumento ya que correrá en maquinas diferentes con una IP diferente.
+Esto se hace porque los nodos hacen todas las peticiones a la siguiente URL:
+`http://internet-facing-1575917799.us-east-1.elb.amazonaws.com:8080/`
 
-Cuando los super peer esten en linea se deben registrar con los otros super peer para que se conozcan, esto se puede hacer mediante un script pero por ahora se hace manualmente de la siguiente manera:
+Esto es el DNS del balanceador de cargas con el que cuenta la red. Allí se distribuye el registro de peers entre los super peers disponibles.
 
-En Postman se hace la siguiente solicitud:
+Como los super peers estan dentro de una VPC y no cuentan con una dirección IP pública, se automatizó la ejecución del programa dentro de cada instancia con este script.
 
-GET http://127.0.0.1:8080/register-superpeer
-Body 
-{
-    "address":"127.0.0.1:8081"
-}
+Si llegase a fallar se puede entrar a una de las instancias de super peer que actua como bastión la cual posee una dirección IP pública asignada mediante una IP elastica de AWS y se ejecutan los siguientes comandos:
 
-Esto registra el super peer 8081 en el super peer 8080, se debe hacer una solicitud nuevamente para registrar el super peer 8082 por ejemplo.
+Para recargar Systemd: `sudo systemctl daemon-reload`
 
-Y esto se debe hacer nuevamente para los peer 8081 y 8082 con el fin de que se conozcan entre ellos.
+Para iniciar el servicio de nuevo: `sudo systemctl start flaskapp.service`
 
-Una vez esto realizado se puede hacer la conexión de cada peer en donde se va especificar lo siguiente al momento de subirlos:
-
-python app.py [nombre del nodo] [numero de archivos a compartir] [host] [port]
-
-por ejemplo
-
-python app.py Diego 2 127.0.0.1:8080 8085
-
-Aqui podriamos mapear el host a un nombre para que no sea tan dificl de estar copiando una direccion IP como argumento.
-
-Podria quedar asi:
-
-python app.py Diego 2 Colombia 8085
-
-Esto conectaria el nodo Diego al super peer Colombia en donde Diego compartiria 2 archivos a traves del puerto 8085 (el puerto tampoco seria necesario si solo lanzo un super peer por maquina como usualmente ocurre).
+Para comprobar el estado del servicio: `sudo systemctl status flaskapp.service`

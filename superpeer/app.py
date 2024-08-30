@@ -1,20 +1,29 @@
 from flask import Flask, request, jsonify
-import requests, logging, argparse, random, os
+import requests, os, json
 
 app = Flask(__name__)
-
-# Configuracion de logging
-logging.basicConfig(level=logging.INFO)
 
 nodes = {}
 superpeers = []
 
-# Lista de superpeers conocidos
-known_superpeers = [
-    "127.0.0.1:8080",
-    "127.0.0.1:8081",
-    "127.0.0.1:8082"
-]
+# Cargar la configuración del super peer
+def load_config():
+    config_path = os.path.join(os.path.dirname(__file__), 'config.json')
+
+    with open(config_path, 'r') as config_file:
+        config = json.load(config_file)
+        return config
+    
+# Cargar la configuración
+config = load_config()
+    
+# Registrar los superpeers conocidos al iniciar la aplicación
+known_superpeers = config.get('known_superpeers', [])
+superpeers.extend(known_superpeers)
+
+# Obtener host y puerto del superpeer
+host = config.get('host', '0.0.0.0')
+port = config.get('port', 8080)
 
 # Endpoint para registrar un nodo
 @app.route('/register', methods=['POST'])
@@ -96,4 +105,4 @@ def home():
     return "<h1>Welcome to the Peer Connection Server</h1><p>This server is currently handling peer connections.</p>"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host=host, port=port)

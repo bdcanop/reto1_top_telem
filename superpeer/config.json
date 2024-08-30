@@ -1,0 +1,12 @@
+{
+    "host": "0.0.0.0",
+    "port": 8080,
+    "known_superpeers:": [
+        "http://10.0.1.225:8080",
+        "superpeer2",
+        "superpeer3"
+    ],
+    "resources": {
+        "default_timeout": 30
+    }
+}

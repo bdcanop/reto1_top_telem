@@ -1,0 +1,6 @@
+{
+    "host": "127.0.0.1",
+    "default_timeout": 3,
+    "resources_path": "../resources/resources.txt",
+    "ping_interval": 5
+}

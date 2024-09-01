@@ -1,20 +1,11 @@
 from flask import Flask, request, jsonify
-import requests, os, json, threading, time, logging
+import requests, os, json, threading, time
 
 app = Flask(__name__)
 
 nodes = {} # Nodos registrados en el superpeer
 known_superpeers = [] # Lista de superpeers conocidos
 active_superpeers = [] # Lista de superpeers activos
-
-logging.basicConfig(
-    level = logging.INFO,
-    format = '%(asctime)s - %(levelname)s - %(message)s',
-    handlers = [
-        logging.FileHandler("superpeer.log"),
-        logging.StreamHandler()
-    ]
-)
 
 # Cargar la configuración del super peer
 def load_config():
@@ -44,11 +35,11 @@ def ping_superpeers():
                 response = requests.get(f"http://{superpeer}/health") # Endpoint de salud de los superpeers
                 if response.status_code == 200 and superpeer not in active_superpeers:
                     active_superpeers.append(superpeer)
-                    logging.info(f"Superpeer {superpeer} is back online and added to the network")
+                    print(f"Superpeer {superpeer} is back online and added to the network")
             except requests.exceptions.RequestException:
                 if superpeer in active_superpeers:
                     active_superpeers.remove(superpeer)
-                    logging.info(f"Superpeer {superpeer} is offline and removed from the network")
+                    print(f"Superpeer {superpeer} is offline and removed from the network")
         time.sleep(default_timeout) # Espera 2 segundos antes de volver a verificar
 
 # Iniciar el hilo para verificar la disponibilidad de los superpeers
@@ -69,11 +60,11 @@ def register_node():
         resources = data['resources']
         nodes[node_id] = resources
 
-        logging.info(f"Node {node_id} registered, nodes: {nodes}. #: {len(nodes)}")
+        print(f"Node {node_id} registered, nodes: {nodes}. #: {len(nodes)}")
         return jsonify({"message": f"Node {node_id} registered successfully. Total nodes: {len(nodes)}"}), 200
     
     except Exception as e:
-        logging.error(f"Error registering node: {str(e)}")
+        print(f"Error registering node: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 # Endpoint para buscar recursos
@@ -97,11 +88,11 @@ def search():
                 if response.status_code == 200:
                     return response.json()
             except Exception as e:
-                logging.warning(f"Error searching resource in superpeer {superpeer}: {str(e)}")
+                print(f"Error searching resource in superpeer {superpeer}: {str(e)}")
         return jsonify({"message": "Resource not found"}), 404
     
     except Exception as e:
-        logging.error(f"Error searching resource: {str(e)}")
+        print(f"Error searching resource: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 # Endpoint para listar todos los nodos y los recursos disponibles
@@ -110,7 +101,7 @@ def list_nodes_and_resources():
     try:
         return jsonify(nodes)
     except Exception as e:
-        logging.error(f"Error listing nodes: {str(e)}")
+        print(f"Error listing nodes: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 # Endpoint para listar todos los superpeers registrados
@@ -119,7 +110,7 @@ def list_superpeers():
     try:
         return jsonify(active_superpeers)
     except Exception as e:
-        logging.error(f"Error listing superpeers: {str(e)}")
+        print(f"Error listing superpeers: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/')

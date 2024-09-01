@@ -15,7 +15,8 @@ def load_config():
 config = load_config()
 
 # Obtener informacion de bootstrap
-host = config.get('host', '127.0.0.1')
+superpeer_host = config.get('superpeer_host', 'Internet-Facing-1575917799.us-east-1.elb.amazonaws.com')
+superpeer_port = config.get('superpeer_port', 8080)
 default_timeout = config.get('default_timeout', 3)
 resources_path_config = config.get('resources_path', '../resources/resources.txt')
 ping_interval = config.get('ping_interval', 5)
@@ -27,19 +28,16 @@ def load_resources(file_path, num_resources):
     return random.sample(all_resources, num_resources)
 
 # Configurar argumentos de la línea de comandos
-parser = argparse.ArgumentParser(description='Iniciar un nodo con un nombre y una cantidad de archivos a compartir.')
+parser = argparse.ArgumentParser(description='Iniciar un nodo con un nombre y recursos')
 parser.add_argument('node_name', type=str, help='Nombre del nodo')
-parser.add_argument('num_files', type=int, help='Cantidad de archivos a compartir')
-parser.add_argument('host', type=str, help='Host al que se conectara el super peer')
-parser.add_argument('port', type=int, help='Puerto en el que se ejecutará el nodo')
-parser.add_argument('port_sp', type=str, help='Puerto del superpeer al que se conectara')
+parser.add_argument('node_port', type=int, help='Puerto en el que se ejecutará el nodo')
 args = parser.parse_args()
 
 # Ruta del directorio de recursos
 resources_path = os.path.join(os.path.dirname(__file__), resources_path_config)
 
-# Simulando los recursos que tiene este nodo
-resources = load_resources(resources_path, args.num_files)
+# Simulando los recursos que tiene este nodo con 2 recursos por defecto por nodo
+resources = load_resources(resources_path, 2)
 
 # Endpoint para subir un archivo dummy
 @app.route('/upload', methods=['POST'])
@@ -80,7 +78,7 @@ def update_superpeer():
             "node_id": args.node_name,
             "resources": resources
         }
-        response = requests.post(f"http://{host}:{args.port_sp}/register", json=data)
+        response = requests.post(f"http://{superpeer_host}:{superpeer_port}/register", json=data)
         response.raise_for_status()
         print(response.json())
     except requests.exceptions.RequestException as e:
@@ -89,7 +87,7 @@ def update_superpeer():
 # Función para registrar el nodo en el superpeer
 def register_with_superpeer():
     try:
-        superpeer_url = f"http://{host}:{args.port_sp}/register"
+        superpeer_url = f"http://{superpeer_host}:{superpeer_port}/register"
         data = {
             "node_id": args.node_name,
             "resources": resources
@@ -109,7 +107,7 @@ def keep_connection():
                 # Establecer un timeout de 3 segundos
                 sock.settimeout(default_timeout)
                 # Intentar conectar al superpeer
-                result = sock.connect_ex((host, int(args.port_sp)))
+                result = sock.connect_ex((superpeer_host, superpeer_port))
             if result != 0:
                 print("Superpeer is not available")
                 os._exit(1)
@@ -123,4 +121,4 @@ ping_thread.start()
 
 if __name__ == '__main__':
     register_with_superpeer()
-    app.run(host=args.host, port=args.port)
+    app.run(host='0.0.0.0', port=args.node_port)

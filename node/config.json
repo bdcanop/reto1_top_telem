@@ -1,5 +1,6 @@
 {
-    "host": "127.0.0.1",
+    "superpeer_host": "Internet-Facing-1575917799.us-east-1.elb.amazonaws.com",
+    "superpeer_port": 8080,
     "default_timeout": 3,
     "resources_path": "../resources/resources.txt",
     "ping_interval": 5

@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import requests, os, json, threading, time
+import requests, os, json, threading, time, socket
 
 app = Flask(__name__)
 
@@ -25,12 +25,21 @@ active_superpeers.extend(known_superpeers)
 # Obtener host y puerto del superpeer
 superpeer_host = config.get('host', '0.0.0.0')
 superpeer_port = config.get('port', 8080)
-default_timeout = config.get('default_timeout', 2)
+default_timeout = config.get('default_timeout', 5)
+
+# Obtener la dirección IP del superpeer actual
+def get_current_superpeer_ip():
+    hostname = socket.gethostname()
+    return socket.gethostbyname(hostname)
+
+current_superpeer_ip = get_current_superpeer_ip()
 
 # Función para verificar la disponibilidad de los superpeers
 def ping_superpeers():
     while True:
         for superpeer in known_superpeers[:]: # Esto es una copia de la lista
+            if superpeer == current_superpeer_ip+":"+str(superpeer_port): # No se puede hacer ping a sí mismo
+                continue
             try:
                 response = requests.get(f"http://{superpeer}/health") # Endpoint de salud de los superpeers
                 if response.status_code == 200 and superpeer not in active_superpeers:
@@ -115,7 +124,7 @@ def list_superpeers():
 
 @app.route('/')
 def home():
-    return "<h1>Welcome to the Peer Connection Server</h1><p>This server is currently handling peer connections.</p>"
+    return "<h1>Welcome to the Peer Connection Server</h1><p>This server is currently handling peer connections.</p> <p>Superpeer IP: "+current_superpeer_ip+"</p>"
 
 if __name__ == '__main__':
     app.run(host=superpeer_host, port=superpeer_port)

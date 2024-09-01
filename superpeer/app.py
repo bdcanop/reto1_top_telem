@@ -11,7 +11,7 @@ logging.basicConfig(
     level = logging.INFO,
     format = '%(asctime)s - %(levelname)s - %(message)s',
     handlers = [
-        logging.FileHandler("superpeer2.log"),
+        logging.FileHandler("superpeer.log"),
         logging.StreamHandler()
     ]
 )

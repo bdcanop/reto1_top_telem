@@ -84,19 +84,27 @@ def search():
 
         # Buscar en los nodos locales
         for node_id, resources in nodes.items():
-            print("entra al primer for")
+            print("entra al segundo for")
             if resource_name in resources:
                 return jsonify({"node_id": node_id, "resource": resource_name})
-        
+            
+        ping_superpeers()
+        if len(superpeers) == 1:
+            return jsonify({"message": "Resource not found"})
         # Si no se encuentra localmente, buscar en otros superpeers
+        print(superpeers)
         for superpeer in superpeers:
             print("entra al segundo for")
             try:
                 response = requests.get(f"http://{superpeer}/search", params={"resource": resource_name})
+                print(response)
                 if response.status_code == 200:
                     return response.json()
+                elif response.status_code == 404:
+                    return jsonify({"message": "Resource not found"}), 404
             except Exception as e:
                 print(f"Error searching resource in superpeer {superpeer}: {str(e)}")
+            
         
         return jsonify({"message": "Resource not found"}), 404
     except Exception as e:

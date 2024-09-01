@@ -49,7 +49,7 @@ def ping_superpeers():
                 if superpeer in active_superpeers:
                     active_superpeers.remove(superpeer)
                     print(f"Superpeer {superpeer} is offline and removed from the network")
-        time.sleep(default_timeout) # Espera 2 segundos antes de volver a verificar
+        time.sleep(default_timeout) # Espera 5 segundos antes de volver a verificar
 
 # Iniciar el hilo para verificar la disponibilidad de los superpeers
 ping_thread = threading.Thread(target=ping_superpeers, daemon=True)
@@ -81,6 +81,7 @@ def register_node():
 def search():
     try:
         resource_name = request.args.get('resource')
+        redirected = request.args.get('redirected', 'false').lower() == 'true'
 
         if not resource_name:
             return jsonify({"error": "Resource parameter is required"}), 400
@@ -91,13 +92,14 @@ def search():
                 return jsonify({"node_id": node_id, "resource": resource_name})
         
         # Si no se encuentra localmente, buscar en otros superpeers
-        for superpeer in active_superpeers:
-            try:
-                response = requests.get(f"http://{superpeer}/search", params={"resource": resource_name})
-                if response.status_code == 200:
-                    return response.json()
-            except Exception as e:
-                print(f"Error searching resource in superpeer {superpeer}: {str(e)}")
+        if not redirected:
+            for superpeer in active_superpeers:
+                try:
+                    response = requests.get(f"http://{superpeer}/search", params={"resource": resource_name, "redirected": "true"})
+                    if response.status_code == 200:
+                        return response.json()
+                except Exception as e:
+                    print(f"Error searching resource in superpeer {superpeer}: {str(e)}")
         return jsonify({"message": "Resource not found"}), 404
     
     except Exception as e:

@@ -17,7 +17,7 @@ config = load_config()
 # Obtener informacion de bootstrap
 superpeer_host = config.get('superpeer_host', 'Internet-Facing-1575917799.us-east-1.elb.amazonaws.com')
 superpeer_port = config.get('superpeer_port', 8080)
-default_timeout = config.get('default_timeout', 3)
+default_timeout = config.get('default_timeout', 10)
 resources_path_config = config.get('resources_path', '../resources/resources.txt')
 ping_interval = config.get('ping_interval', 5)
 
@@ -104,7 +104,7 @@ def keep_connection():
         try:
             # Crear un socket tcp para mantener la conexión
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                # Establecer un timeout de 3 segundos
+                # Establecer un timeout de 10 segundos
                 sock.settimeout(default_timeout)
                 # Intentar conectar al superpeer
                 result = sock.connect_ex((superpeer_host, superpeer_port))

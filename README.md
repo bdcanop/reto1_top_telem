@@ -86,3 +86,9 @@ ssh -i "super-peer.pem" ubuntu@98.82.69.129
 
 Superpeer4 - Direccion IP Privada: 10.0.1.216:8080 - Direccion IP Publica: 23.22.64.232
 ssh -i "super-peer.pem" ubuntu@23.22.64.232
+
+# referencias:
+
+## https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview
+## https://flask.palletsprojects.com/en/3.0.x/
+## https://docs.python-requests.org/en/latest/

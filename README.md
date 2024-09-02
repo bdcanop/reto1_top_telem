@@ -48,20 +48,33 @@ Si alguno de los superpeers se deconecta, los peers conectados a este se apagan 
 
 # 4. Descripción del ambiente de EJECUCIÓN (en producción) lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
 
-# IP o nombres de dominio en nube o en la máquina servidor.
+Cuando se inician las instancias que soportan los super peer Systemd busca todos los servicios habilitados y arranca el servicio llamado `flaskapp.service` automaticamente.
 
-## descripción y como se configura los parámetros del proyecto (ej: ip, puertos, conexión a bases de datos, variables de ambiente, parámetros, etc)
+Esto se hace porque los nodos hacen todas las peticiones a la siguiente URL:
+`http://internet-facing-1575917799.us-east-1.elb.amazonaws.com:8080/`
 
-## como se lanza el servidor.
+Esto es el DNS del balanceador de cargas con el que cuenta la red. Allí se distribuye el registro de peers entre los super peers disponibles.
 
-## una mini guia de como un usuario utilizaría el software o la aplicación
+Como los super peers estan dentro de una VPC y no cuentan con una dirección IP pública, se automatizó la ejecución del programa dentro de cada instancia con este script.
 
-## opcionalmente - si quiere mostrar resultados o pantallazos 
+Si llegase a fallar se puede entrar a una de las instancias de super peer que actua como bastión la cual posee una dirección IP pública asignada mediante una IP elastica de AWS y se ejecutan los siguientes comandos:
 
-# 5. otra información que considere relevante para esta actividad.
+Para recargar Systemd: ` sudo systemctl daemon-reload `
 
-# referencias:
-<debemos siempre reconocer los créditos de partes del código que reutilizaremos, así como referencias a youtube, o referencias bibliográficas utilizadas para desarrollar el proyecto o la actividad>
-## sitio1-url 
-## sitio2-url
-## url de donde tomo info para desarrollar este proyecto
+Para iniciar el servicio de nuevo: ` sudo systemctl start flaskapp.service `
+
+Para comprobar el estado del servicio: ` sudo systemctl status flaskapp.service `
+
+Para ver los logs del servicio: ` journalctl -u flaskapp.service -f `
+
+Superpeer1 - Direccion IP Privada: 10.0.1.225:8080 - Direccion IP Publica: 3.212.232.139
+ssh -i "super-peer.pem" ubuntu@3.212.232.139
+
+Superpeer2 - Direccion IP Privada: 10.0.1.174:8080 - Direccion IP Publica: 54.197.61.74
+ssh -i "super-peer.pem" ubuntu@54.197.61.74
+
+Superpeer3 - Direccion IP Privada: 10.0.1.165:8080 - Direccion IP Publica: 98.82.69.129
+ssh -i "super-peer.pem" ubuntu@98.82.69.129
+
+Superpeer4 - Direccion IP Privada: 10.0.1.216:8080 - Direccion IP Publica: 23.22.64.232
+ssh -i "super-peer.pem" ubuntu@23.22.64.232

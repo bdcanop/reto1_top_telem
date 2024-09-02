@@ -14,6 +14,20 @@
 * Gestión dinámica de los recursos de los peers, donde los superpeers actualizan su lista de recursos disponibles cada vez que un peer se conecta, desconecta, o modifica sus recursos.
 * Implementación de mecanismos de ping entre superpeers para mantener un listado actualizado de superpeers activos en la red.
 
+### Método Download
+![Método de Download](./images/Download.png)
+### Método Upload
+![Método Upload](./images/Upload.png)
+### Método List-Resources
+![Método de List-Resources](./images/List_Resources.png)
+### Método List-Superpeers
+![Método de List-SuperPeers](./images/List_Super_Peers.png)
+### Superpeer logs con registro
+![SuperPeer logs con registro](./images/SuperPeer_Logs_con_Registro.png)
+### Superpeer con busqueda
+![SuperPeer con busqueda](./images/SuperPeer_con_busqueda.png)
+
+
 ## 1.2. Que aspectos NO cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)
 * Todos los aspectos funcionales y no funcionales solicitados por el profesor fueron implementados.
 
@@ -39,12 +53,6 @@ Para el desarrollo de este proyecto se utilizó el framework Flask que usa el le
 ## detalles técnicos
 En esta red, los peers se conectan a los superpeers proporcionandoles el listado de sus recursos (registrarse), los superpeers tienen un hash donde guardan la información de los peers, a su vez tienen acceso a las direcciones de otros superpeers mediante los archivos de configuración. Si se solicita un archivo a un superpeer, este buscará su nombre en el hash y devolverá la dirección en caso de que alguno de los nodos conectado a este superpeer tenga el archivo, si ninguno de los nodos tiene el archivo, el superpeer procede a solicitar el arhivo a otros superpeers que a su vez buscan en sus propios hash, si ninguno de ellos lo tiene, la respuesta es que el archivo no fue encontrado.
 Si alguno de los superpeers se deconecta, los peers conectados a este se apagan automáticamente y el resto de los superpeers son actualizados ya que entre los superpeers hacen ping constantemente para saber si siguen en línea.
-
-## descripción y como se configura los parámetros del proyecto (ej: ip, puertos, conexión a bases de datos, variables de ambiente, parámetros, etc)
-
-## opcional - detalles de la organización del código por carpetas o descripción de algún archivo. (ESTRUCTURA DE DIRECTORIOS Y ARCHIVOS IMPORTANTE DEL PROYECTO, comando 'tree' de linux)
-## 
-## opcionalmente - si quiere mostrar resultados o pantallazos 
 
 # 4. Descripción del ambiente de EJECUCIÓN (en producción) lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones.
 

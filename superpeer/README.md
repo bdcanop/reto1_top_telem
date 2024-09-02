@@ -15,6 +15,8 @@ Para iniciar el servicio de nuevo: ` sudo systemctl start flaskapp.service `
 
 Para comprobar el estado del servicio: ` sudo systemctl status flaskapp.service `
 
+Para ver los logs del servicio: ` journalctl -u flaskapp.service -f `
+
 Superpeer1 - Direccion IP Privada: 10.0.1.225:8080 - Direccion IP Publica: 3.212.232.139
 ssh -i "super-peer.pem" ubuntu@3.212.232.139
 
